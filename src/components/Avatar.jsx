@@ -4,24 +4,30 @@ Command: npx gltfjsx@6.2.16 public/models/01.glb
 */
 
 import React, { useEffect, useRef } from 'react'
-import { useGLTF } from '@react-three/drei'
+import { useGLTF, useFBX, useAnimations } from '@react-three/drei'
 
 export function Avatar(props) {
   const group = useRef();
   const { nodes, materials } = useGLTF('models/01.glb')
 
   const {animations: typingAnimation} = useFBX("animations/Typing.fbx");
+  typingAnimation[0].name = "Typing";
 
-  console.log(typingAnimation);
 
-  const {actions} = useAnimations(typingAnimation, group);
+
+  const {actions} = useAnimations([typingAnimation[0]], group);
+  console.log('typingAnimation[0] ', typingAnimation[0]);
+  console.log('actions["Typing"]: ', actions["Typing"]);
+  console.log('typingAnimation:', typingAnimation);
+  console.log('actions:', actions);
+  console.log('group:', group);
 
   useEffect(()=>{
     actions["Typing"].reset().play();
   }, []);
   
   return (
-    <group {...props} dispose={null}>
+    <group {...props} ref={group} dispose={null}>
       <primitive object={nodes.Hips} />
       <skinnedMesh geometry={nodes.Wolf3D_Hair.geometry} material={materials.Wolf3D_Hair} skeleton={nodes.Wolf3D_Hair.skeleton} />
       <skinnedMesh geometry={nodes.Wolf3D_Glasses.geometry} material={materials.Wolf3D_Glasses} skeleton={nodes.Wolf3D_Glasses.skeleton} />
